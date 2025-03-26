@@ -18,7 +18,7 @@ public class Bakery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String mail;
+    private String email;
     private String password;
     private String name;
     @OneToMany(mappedBy = "bakery", cascade = CascadeType.ALL, orphanRemoval = true)

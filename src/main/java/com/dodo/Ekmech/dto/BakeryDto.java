@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BakeryDto {
     private Long id;
-    private String mail;
+    private String email;
     private String name;
     private String password;
     private List<ServicesDto> services;

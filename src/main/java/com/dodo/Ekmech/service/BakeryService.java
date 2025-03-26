@@ -4,6 +4,7 @@ import com.dodo.Ekmech.dto.BakeryDto;
 import com.dodo.Ekmech.exception.ResourceNotFoundException;
 import com.dodo.Ekmech.model.Bakery;
 import com.dodo.Ekmech.repository.BakeryRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 public class BakeryService {
 
     private final BakeryRepository bakeryRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public BakeryService(BakeryRepository bakeryRepository) {
+    public BakeryService(BakeryRepository bakeryRepository, PasswordEncoder passwordEncoder) {
         this.bakeryRepository = bakeryRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public BakeryDto getBakeryById(Long id) {
@@ -25,13 +28,14 @@ public class BakeryService {
     }
 
     public BakeryDto createBakery(BakeryDto bakeryDto) {
-        Bakery bakery = new Bakery(null, bakeryDto.getMail(), bakeryDto.getPassword(), bakeryDto.getName(), null, null, null);
+        String encodedPassword = passwordEncoder.encode(bakeryDto.getPassword());
+        Bakery bakery = new Bakery(null, bakeryDto.getEmail(), encodedPassword, bakeryDto.getName(), null, null, null);
         return convertToDto(bakeryRepository.save(bakery));
     }
 
     public BakeryDto updateBakery(Long id, BakeryDto bakeryDto) {
         Bakery bakery = bakeryRepository.findById(id).orElseThrow(() -> new RuntimeException("Bakery not found"));
-        bakery.setMail(bakeryDto.getMail());
+        bakery.setEmail(bakeryDto.getEmail());
         bakery.setPassword(bakeryDto.getPassword());
         bakery.setName(bakeryDto.getName());
         return convertToDto(bakeryRepository.save(bakery));
@@ -39,6 +43,6 @@ public class BakeryService {
 
 
     private BakeryDto convertToDto(Bakery bakery) {
-        return new BakeryDto(bakery.getId(), bakery.getMail(), bakery.getPassword(), bakery.getName(), null, null, null);
+        return new BakeryDto(bakery.getId(), bakery.getEmail(),  bakery.getName(), bakery.getPassword(),null, null, null);
     }
 }
